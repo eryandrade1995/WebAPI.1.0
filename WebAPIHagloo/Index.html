@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Web API</title>
+</head>
+    <body>
+       <div style="font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif">
+        <div>
+            <h2>Todos os Produtos</h2>
+            <ul id="produtos" />
+        </div>
+        <div>
+            <h2>Procurar Produto por código: </h2>
+            <input type="text" id="prodId" size="5" />
+            <input type="button" value="Procurar" onclick="Procurar();" />
+            <p id="produto" />
+
+        </div>
+    </div>
+
+        <script src="http://ajax.aspnetcdn.com/ajax/JQuery/jquery-2.1.4.min.js"></script>
+
+        <script>
+            var uri = 'api/produto';
+            $(document).ready(function () {
+                // Envia uma requisição AJAX  
+                $.getJSON(uri)
+                    .done(function (data) {
+                    // se ocorreu tudo certo então 'data' vai conter uma lista de produtos
+                    $.each(data, function (key, item) {
+                        // adiciona a lista de item ao produto
+                        $('<li>', { text: formatItem(item) }).appendTo($('#produtos'));
+                        //exibe o resultado na <ul id="produtos" />
+                    });
+                });
+            });
+
+            // formata a saida exibindo o nome e o preço
+            function formatItem(item) {
+                return item.Id + " - " + item.Nome + ': R$' + item.Preco;
+            }
+
+            // localiza o produto pelo seu id
+            function Procurar() {
+                var id = $('#prodId').val();
+                $.getJSON(uri + '/' + id)
+                    .done(function (data) {
+                        $('#produto').text(formatItem(data));
+                        //retorna o produto pelo id
+                    })
+                    .fail(function (jqXHR, textStatus, err) {
+                        $('#produto').text('Erro : ' + err);
+                    });
+            }
+        </script>
+    </body>
+</html>
